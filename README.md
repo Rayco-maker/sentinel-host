@@ -1,114 +1,152 @@
-Sentinel Host is a powerful, cross-platform Python system designed to manage and monitor multiple Discord bots from a single Virtual Private Server (VPS) or local machine. All control—start, stop, updates, and health checks—is performed through a Telegram Bot interface.
+# 🛡️ Sentinel Host
 
-🚀 Key Features
-Centralized Control: Manage all bots from Telegram (mobile or desktop).
+> A powerful Discord bot manager controlled entirely through Telegram
 
-Intelligent Monitoring: Automatic detection and restart of crashed bots.
+[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)](https://github.com/Rayco-maker/sentinel-host)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Cross-Platform: Full compatibility with Windows and Linux (essential for VPS).
+**Sentinel Host** is a robust, cross-platform Python system for centralized management and monitoring of multiple Discord bots from a single VPS or local machine. Control everything remotely through an intuitive Telegram bot interface.
 
-Easy Deployment: Guided setup for cloning GitHub repositories, creating isolated Python Virtual Environments (venv), and installing dependencies.
+---
 
-Maintenance Tools: Commands for running shell commands (/execbot), installing new packages (/pipinstall), and performing full code updates (/updatebot).
+## ✨ Features
 
-⚙️ Installation and Setup
-Prerequisites
-Python 3.10+ installed on your host machine (Windows or VPS).
+- **🤖 Telegram Control Interface** - Manage all bots remotely through Telegram commands
+- **🔄 One-Command Updates** - Auto-update bots with Git pull, dependency reinstall, and restart
+- **📊 Intelligent Monitoring** - Automatic crash detection, restart management, and memory alerts
+- **🔒 Isolated Environments** - Each bot runs in its own Python virtual environment
+- **🌐 Cross-Platform** - Works seamlessly on Windows and Linux (VPS ready)
+- **📝 Comprehensive Logging** - Track every action and error with dedicated log files
 
-Git installed and accessible via the command line.
+---
 
-Telegram Bot Token: Obtained from BotFather on Telegram.
+## 📋 Table of Contents
 
-Telegram Admin Chat ID: Your personal Telegram user ID (numerical).
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Deployment](#-deployment)
+- [Usage](#-usage)
+- [Commands Reference](#-commands-reference)
+- [Troubleshooting](#-troubleshooting)
 
-Step 1: Clone the Project and Create Venv
-Open your terminal (or PyCharm Terminal) and execute the following:
+---
 
-Bash
+## 🔧 Prerequisites
 
-# Clone the repository (replace [REPO_URL] with the actual URL)
-git clone [REPO_URL] sentinel-host
+Before installing Sentinel Host, ensure you have:
+
+| Requirement | Version | Notes |
+|------------|---------|-------|
+| **Python** | 3.11 or 3.12 | Recommended for stability |
+| **Git** | Latest | Required for bot updates |
+| **Telegram Bot Token** | - | Obtain from [@BotFather](https://t.me/botfather) |
+| **Telegram Chat ID** | - | Your numerical user ID |
+
+### Getting Your Telegram Credentials
+
+1. **Bot Token**: Message [@BotFather](https://t.me/botfather) on Telegram
+   - Send `/newbot`
+   - Follow prompts to create your bot
+   - Save the token provided
+
+2. **Chat ID**: Message [@userinfobot](https://t.me/userinfobot)
+   - Your numerical ID will be displayed
+   - Save this number (e.g., `123456789`)
+
+---
+
+## 📦 Installation
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Rayco-maker/sentinel-host.git
 cd sentinel-host
+```
 
-# Create a Python Virtual Environment
-python -m venv venv
+### Step 2: Create Virtual Environment
 
-# Activate the Virtual Environment
-# Linux/macOS:
-# source venv/bin/activate
-# Windows (CMD):
+**Windows:**
+```bash
+py -m venv venv
 venv\Scripts\activate
-Step 2: Install Dependencies
-Sentinel Host requires its core dependencies, including the optional job-queue module for recurring monitoring tasks.
+```
 
-With the venv active, run:
+**Linux/macOS:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
-Bash
+### Step 3: Install Dependencies
 
+```bash
 pip install -r requirements.txt
 pip install "python-telegram-bot[job-queue]"
-Note: If you experience issues, ensure your requirements.txt includes the correct versions (python-telegram-bot, psutil, etc.).
+```
 
-Step 3: Configuration (Edit bot_manager.py)
-Open the bot_manager.py file and edit the configuration variables at the top of the script with your tokens and IDs:
+> **Note**: The `job-queue` module is mandatory for monitoring features.
 
-Python
+---
 
-# Tokens et IDs (À REMPLACER PAR VOS VRAIES VALEURS)
-TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN" # <-- REPLACE THIS
-ADMIN_CHAT_ID = YOUR_NUMERICAL_CHAT_ID       # <-- REPLACE THIS
-GITHUB_PAT = "ghp_..." # Optional, for private repositories
-Step 4: Run Sentinel Host
-Run the main script:
+## ⚙️ Configuration
 
-Bash
+### Edit Configuration File
 
+Open `bot_manager.py` and update the following variables (lines 37-39):
+
+```python
+TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"  # From BotFather
+ADMIN_CHAT_ID = YOUR_NUMERICAL_CHAT_ID          # Your Telegram user ID
+GITHUB_PAT = ""                                  # Optional: For private repos
+```
+
+### Environment Variables (Alternative)
+
+You can also use environment variables:
+
+```bash
+export TELEGRAM_BOT_TOKEN="your_token_here"
+export ADMIN_CHAT_ID="your_chat_id_here"
+```
+
+---
+
+## 🚀 Deployment
+
+### Option A: Local/Development
+
+Run directly while the virtual environment is active:
+
+```bash
 python bot_manager.py
-Sentinel Host should send a welcome message to your configured ADMIN_CHAT_ID on Telegram.
+```
 
-💻 Deployment on a VPS (Linux)
-For reliable 24/7 hosting, deploying on a Linux VPS using a persistent service manager like screen or systemd is recommended.
+### Option B: Production (Linux VPS with systemd)
 
-Option A: Using screen (Simple Persistent Session)
-Complete Steps 1-3 from the general setup above.
+For 24/7 operation on a Linux server, use systemd:
 
-Install screen if needed: sudo apt update && sudo apt install screen -y
+#### 1. Create Service File
 
-Start a new screen session (this keeps the program running even if you disconnect):
+```bash
+sudo nano /etc/systemd/system/sentinelhost.service
+```
 
-Bash
+#### 2. Configure Service
 
-screen -S sentinel_session
-Activate the venv and run the bot inside the screen session:
+Replace `your_linux_username` with your actual username:
 
-Bash
-
-source venv/bin/activate
-python bot_manager.py
-Detach from the screen session (the process keeps running):
-
-Bash
-
-# Press: Ctrl + A + D
-To reattach later: screen -r sentinel_session
-
-Option B: Using systemd (Production Recommended)
-Complete Steps 1-3 from the general setup.
-
-Create a service file: sudo nano /etc/systemd/system/sentinelhost.service
-
-Paste the following content (replace paths and user):
-
-Ini, TOML
-
+```ini
 [Unit]
 Description=Sentinel Host Discord Bot Manager
 After=network.target
 
 [Service]
-User=your_linux_username       # <-- REPLACE THIS
-WorkingDirectory=/home/your_linux_username/sentinel-host # <-- REPLACE THIS
-ExecStart=/home/your_linux_username/sentinel-host/venv/bin/python bot_manager.py # <-- REPLACE THIS
+User=your_linux_username
+WorkingDirectory=/home/your_linux_username/sentinel-host
+ExecStart=/home/your_linux_username/sentinel-host/venv/bin/python bot_manager.py
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -116,44 +154,178 @@ StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
-Save and exit (Ctrl + X, then Y, then Enter).
+```
 
-Enable and start the service:
+#### 3. Enable and Start
 
-Bash
-
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable sentinelhost.service
 sudo systemctl start sentinelhost.service
-Check the status: sudo systemctl status sentinelhost.service
+```
 
-📋 Bot Management Commands (via Telegram)
-Once Sentinel Host is running, interact with it using your Telegram Bot:
+#### 4. Verify Status
 
-Category	Command	Description
-Provisioning	/newbot	Starts the conversation to register a new bot.
-/setup	Clones the GitHub repository, creates the venv, and installs dependencies.
-/deletebot	Removes the bot's files and configuration completely.
-Control	/startbot	Starts a stopped bot process.
-/stopbot	Gracefully stops a running bot process.
-/restartbot	Stops and immediately restarts a bot.
-Maintenance	/updatebot	Performs Git Pull, re-runs Setup (updates venv/deps), and restarts the bot.
-/settoken	Updates the Discord token (updates config and .env file).
-/setrepo	Updates the GitHub repository URL.
-Monitoring	/status	Shows the running status (🟢/🔴) of all managed bots.
-/health	Shows detailed stats (CPU, RAM, PID, Uptime) for a selected bot.
-/logs	Displays the last 50 lines of the bot's log file.
+```bash
+sudo systemctl status sentinelhost.service
+```
 
-Exporter vers Sheets
-🆕 Workflow Example: Adding a Bot
-Telegram: Send /newbot
+---
 
-Bot: Enter the bot's name (e.g., musicbot).
+## 📱 Usage
 
-Bot: Enter the bot's GitHub repository URL (e.g., https://github.com/user/musicbot.git).
+### Initial Bot Setup Workflow
 
-Telegram: Send /setup musicbot to provision the environment.
+Follow these steps to add and deploy a new Discord bot:
 
-Telegram: Send /settoken musicbot and paste your Discord bot token.
+| Step | Command | Description |
+|------|---------|-------------|
+| **1. Register** | `/newbot` | Initiate bot registration with name and GitHub URL |
+| **2. Setup** | `/setup [bot_name]` | Clone repository and install dependencies |
+| **3. Configure** | `/settoken [bot_name]` | Store Discord token (creates `.env` file) |
+| **4. Launch** | `/startbot [bot_name]` | Start the bot process |
 
-Telegram: Send /startbot musicbot to launch your bot.
+**Example:**
+```
+/newbot
+→ Bot Name: MyDiscordBot
+→ GitHub URL: https://github.com/username/bot-repo
+
+/setup MyDiscordBot
+/settoken MyDiscordBot
+→ Token: YOUR_DISCORD_BOT_TOKEN
+
+/startbot MyDiscordBot
+```
+
+---
+
+## 🎮 Commands Reference
+
+### 📦 Core Management
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/newbot` | Register a new bot | `/newbot` |
+| `/setup [name]` | Clone repo and setup environment | `/setup MyBot` |
+| `/settoken [name]` | Configure Discord token | `/settoken MyBot` |
+| `/startbot [name]` | Start a bot | `/startbot MyBot` |
+| `/stopbot [name]` | Stop a running bot | `/stopbot MyBot` |
+| `/restartbot [name]` | Restart a bot | `/restartbot MyBot` |
+| `/removebot [name]` | Delete bot and all data | `/removebot MyBot` |
+
+### 🔄 Maintenance
+
+| Command | Description | Details |
+|---------|-------------|---------|
+| `/updatebot [name]` | Update bot from Git | Pulls latest code, reinstalls dependencies, restarts |
+| `/setrepo [name]` | Change GitHub repository | Updates the linked repo URL |
+| `/setprefix [name]` | Set display prefix | Quick reference label for `/health` |
+
+### 📊 Monitoring
+
+| Command | Description | Output |
+|---------|-------------|--------|
+| `/status` | Quick status overview | Shows 🟢 running / 🔴 stopped status |
+| `/health` | Detailed metrics | CPU, RAM, PID, uptime for all bots |
+| `/logs [name]` | View recent logs | Last 50 lines from bot's log file |
+
+### 🔧 Advanced
+
+| Command | Description | ⚠️ Warning |
+|---------|-------------|-----------|
+| `/execbot [name] [cmd]` | Execute shell command | Use with extreme caution - runs in bot directory |
+
+**Example:**
+```bash
+/execbot MyBot ls -la
+```
+
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### Bot Won't Start
+```bash
+# Check if virtual environment exists
+ls bots/[bot_name]/venv
+
+# Manually reinstall dependencies
+cd bots/[bot_name]
+source venv/bin/activate  # Linux
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+```
+
+#### Update Failed
+- Ensure Git is installed and accessible
+- Check GitHub repository permissions
+- Verify network connectivity
+
+#### Permission Denied (Linux)
+```bash
+# Fix ownership
+sudo chown -R $USER:$USER ~/sentinel-host
+
+# Fix permissions
+chmod +x bots/*/venv/bin/python
+```
+
+### Logs Location
+
+- **Sentinel Host Logs**: `sentinel_host.log`
+- **Bot Logs**: `bots/[bot_name]/bot.log`
+
+### Systemd Service Logs
+
+```bash
+# View recent logs
+sudo journalctl -u sentinelhost.service -n 50
+
+# Follow live logs
+sudo journalctl -u sentinelhost.service -f
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)
+- Inspired by the need for centralized bot management
+
+---
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Rayco-maker/sentinel-host/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Rayco-maker/sentinel-host/discussions)
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the Discord bot community**
+
+[⬆ Back to Top](#️-sentinel-host)
+
+</div>
