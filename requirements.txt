@@ -1,0 +1,11 @@
+# Sentinel Host - Requirements
+# Manager d'Hébergement de Bots Discord
+
+# Bot Telegram
+python-telegram-bot==20.7
+
+# Gestion des processus et système
+psutil==5.9.6
+
+# Utilitaires
+python-dotenv==1.0.0
